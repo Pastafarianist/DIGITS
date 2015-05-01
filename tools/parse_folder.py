@@ -23,6 +23,10 @@ logger = logging.getLogger('digits.tools.parse_folder')
 def unescape(s):
     return urllib.unquote(s)
 
+def natural_sort_key(s, _nsre=re.compile('([0-9]+)')):
+    return [int(text) if text.isdigit() else text.lower()
+            for text in re.split(_nsre, s)]
+
 def validate_folder(folder):
     if utils.is_url(folder):
         try:
@@ -328,6 +332,10 @@ def parse_folder(folder, labels_file,
     if len(subdirs) < 2:
         logger.error('folder must contain at least two subdirectories')
         return False
+
+    ### Sort subdirs
+
+    subdirs.sort(key=natural_sort_key)
 
     ### Parse the folder
 
